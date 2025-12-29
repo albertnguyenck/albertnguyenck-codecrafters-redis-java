@@ -1,9 +1,13 @@
-void main(String[] args) {
+void main(String[] args) throws InterruptedException {
+    Thread.sleep(100);
     try (var serverSocket = new ServerSocket(6379)) {
         System.out.println("Server started on port 6379");
-        serverSocket.setReuseAddress(true);
-        Socket client = serverSocket.accept();
-        handleClient(client);
+        while (true) {
+            serverSocket.setReuseAddress(true);
+            Socket client = serverSocket.accept();
+            Thread.ofVirtual().start(() -> handleClient(client));
+            Thread.sleep(100);
+        }
     } catch (IOException e) {
         System.out.println("IOException: " + e.getMessage());
     }
